@@ -7,12 +7,15 @@ echo "Running the script as user: $CURRENT_USER"
 
 read -p "Are you using yum or apt package manager? " packagemanager
 
-# Install vim
+# Install vim and ncurses
 if ! command -v vim &> /dev/null; then
   sudo $packagemanager install -y vim
   echo "Vim installed successfully"
+elif ! command -v clear &> /dev/null; then
+  sudo $packagemanager install -y ncurses
+  echo "Ncurses package installed, you can use clear command now"
 else
-  echo "Vim is already installed, moving on"
+  echo "Packages are already installed, moving on"
 fi
 
 # Create .vimrc file with the specified settings
