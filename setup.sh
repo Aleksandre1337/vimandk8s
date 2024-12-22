@@ -8,11 +8,17 @@ echo "Running the script as user: $CURRENT_USER"
 read -p "Are you using yum or apt package manager? " packagemanager
 
 # Install vim
-sudo $packagemanager install -y vim
+if ! command -v vim &> /dev/null; then
+  sudo $packagemanager install -y vim
+  echo "Vim installed successfully"
+else
+  echo "Vim is already installed, moving on"
+fi
 
 # Create .vimrc file with the specified settings
-if [ ! -f /home/$CURRENT_USER/.vimrc ]; then
-  cat <<EOL > /home/$CURRENT_USER/.vimrc
+VIMRC_PATH="/home/$CURRENT_USER/.vimrc"
+if [ ! -f "$VIMRC_PATH" ]; then
+  cat <<EOL > "$VIMRC_PATH"
 set ts=2
 set sw=2
 set et
@@ -20,21 +26,31 @@ set ai
 set si
 set ic
 EOL
+  echo ".vimrc created"
 else
   echo ".vimrc already exists, moving on"
 fi
 
-# Update .bashrc with the specified environment variables
-if ! grep -q "export do=" /home/$CURRENT_USER/.bashrc; then
-  cat <<EOL >> /home/$CURRENT_USER/.bashrc
+# Update .bashrc with the specified environment variables and alias
+BASHRC_PATH="/home/$CURRENT_USER/.bashrc"
+if ! grep -q "export do=" "$BASHRC_PATH"; then
+  cat <<EOL >> "$BASHRC_PATH"
 export do="--dry-run=client -o yaml"
 export now="--force --grace-period 0"
 EOL
+  echo "Environment variables added to .bashrc"
 else
   echo "Environment variables already set in .bashrc, moving on"
 fi
 
+if ! grep -q "alias k=" "$BASHRC_PATH"; then
+  echo 'alias k=/usr/local/bin/kubectl' >> "$BASHRC_PATH"
+  echo "Alias added to .bashrc"
+else
+  echo "Alias already set in .bashrc, moving on"
+fi
+
 # Source the .bashrc to apply changes as the current user
-sudo -u $CURRENT_USER -i bash -c "source /home/$CURRENT_USER/.bashrc"
+sudo -u $CURRENT_USER -i bash -c "source $BASHRC_PATH"
 
 echo "Vim installed, .vimrc and .bashrc updated."
