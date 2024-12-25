@@ -34,4 +34,7 @@ echo "Environment variables added to .bashrc"
 # Source the .bashrc to apply changes as the current user
 source "$BASHRC_PATH"
 
+# Fix Kubectl Bug
+alias kubectl='/usr/local/bin/kubectl'
+
 echo "Script Complete"
