@@ -23,18 +23,10 @@ set ic
 EOL
 echo ".vimrc updated with necessary settings"
 
-# Update .bashrc with the specified environment variables
-BASHRC_PATH="/home/$CURRENT_USER/.bashrc"
-cat <<EOL >> "$BASHRC_PATH"
+# Execute the environment variables in the current terminal
+alias kubectl='/usr/local/bin/kubectl'
 export do="--dry-run=client -o yaml"
 export now="--force --grace-period 0"
-EOL
-echo "Environment variables added to .bashrc"
-
-# Source the .bashrc to apply changes as the current user
-source "$BASHRC_PATH"
-
-# Fix Kubectl Bug
-alias kubectl='/usr/local/bin/kubectl'
+echo "Environment variables set for the current terminal session"
 
 echo "Script Complete"
